@@ -41,17 +41,22 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
 
 # ============================
-# INICIALIZAR FIREBASE
+# INICIALIZAR FIREBASE (OPCIONAL)
 # ============================
 firebase_key_path = os.path.join(BASE_DIR, 'marqrun-df27a-firebase-adminsdk-fbsvc-b47f8cbaf7.json')
-try:
-    cred = credentials.Certificate(firebase_key_path)
-    firebase_admin.initialize_app(cred)
-    fcm_available = True
-    logging.info("✅ Firebase inicializado correctamente")
-except Exception as e:
-    fcm_available = False
-    logging.warning(f"⚠️ Firebase no disponible: {e}")
+fcm_available = False
+
+if os.path.exists(firebase_key_path):
+    try:
+        cred = credentials.Certificate(firebase_key_path)
+        firebase_admin.initialize_app(cred)
+        fcm_available = True
+        logging.info("✅ Firebase inicializado correctamente")
+    except Exception as e:
+        fcm_available = False
+        logging.warning(f"⚠️ Firebase no disponible: {e}")
+else:
+    logging.warning("⚠️ Archivo Firebase no encontrado - notificaciones push deshabilitadas")
 
 db = SQLAlchemy(app)
 
