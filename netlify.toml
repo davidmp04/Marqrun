@@ -1,0 +1,13 @@
+[build]
+  # El directorio que contiene los archivos a publicar
+  publish = "frontend"
+  
+  # Comando a ejecutar durante el build (opcional para sitios estáticos)
+  command = "echo 'Deploying static frontend'"
+
+# Configuración de redirección para SPA (Single Page Application)
+# Redirige todas las rutas no encontradas al index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
