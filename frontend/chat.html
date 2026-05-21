@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#667eea">
+    <meta name="description" content="Chat en tiempo real - MARQRun">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="MARQRun Chat">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23667eea' width='192' height='192'/><text x='50%' y='50%' font-size='120' text-anchor='middle' dy='.3em' fill='white'>💬</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23667eea' width='192' height='192'/><text x='50%' y='50%' font-size='120' text-anchor='middle' dy='.3em' fill='white'>💬</text></svg>">
+    <title>💬 Chat MARQRun</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="config.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            gap: 20px;
+            height: calc(100vh - 40px);
+        }
+
+        /* SIDEBAR - Grupos */
+        .sidebar {
+            width: 280px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+        }
+
+        .sidebar-header h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .sidebar-header .user-info {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .grupos-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .grupo-item {
+            padding: 15px;
+            margin: 8px 0;
+            background: #f5f5f5;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+
+        .grupo-item:hover {
+            background: #e8e8e8;
+            transform: translateX(5px);
+        }
+
+        .grupo-item.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-left-color: white;
+        }
+
+        .grupo-item-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .grupo-item-count {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .sidebar-footer {
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .logout-btn {
+            width: 100%;
+            padding: 10px;
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #d32f2f;
+        }
+
+        /* MAIN CHAT */
+        .chat-container {
+            flex: 1;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h1 {
+            font-size: 22px;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .header-button {
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .header-button:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .status {
+            font-size: 12px;
+            padding: 5px 12px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status.connected {
+            background: #4caf50;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: white;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f9f9f9;
+            scroll-behavior: smooth;
+        }
+
+        .message-group {
+            margin-bottom: 20px;
+        }
+
+        .message {
+            margin-bottom: 12px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.own {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .message-content {
+            max-width: 65%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            word-wrap: break-word;
+            line-height: 1.4;
+        }
+
+        .message.own .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px 20px 5px 20px;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .message.other .message-content {
+            background: white;
+            color: #333;
+            border-radius: 20px 20px 20px 5px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .message-info {
+            font-size: 11px;
+            margin-top: 6px;
+            color: #999;
+            padding: 0 8px;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 12px 16px;
+            background: #f0f0f0;
+            border-radius: 20px;
+            width: fit-content;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ccc;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% { opacity: 0.5; transform: translateY(0); }
+            30% { opacity: 1; transform: translateY(-10px); }
+        }
+
+        /* Login Section */
+        .login-section {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            max-width: 400px;
+            margin: auto;
+            height: fit-content;
+            margin-top: 50px;
+        }
+
+        .login-section h2 {
+            margin-bottom: 30px;
+            color: #333;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: transform 0.2s;
+        }
+
+        .login-btn:hover {
+            transform: scale(1.02);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .error {
+            color: #f44336;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .success {
+            color: #4caf50;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        /* Input Area */
+        .input-area {
+            padding: 20px;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+            background: white;
+        }
+
+        .input-area input {
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            padding: 12px 20px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-area input:focus {
+            border-color: #667eea;
+        }
+
+        .input-area button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        .input-area button:hover:not(:disabled) {
+            transform: scale(1.05);
+        }
+
+        .input-area button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: 300px;
+            }
+
+            .chat-container {
+                min-height: 500px;
+            }
+
+            .message-content {
+                max-width: 80%;
+            }
+        }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #999;
+        }
+
+        .empty-state h3 {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Chat Section (ÚNICO) -->
+    <div id="chatSection">
+        <div class="container">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <h2>Grupos</h2>
+                    <div class="user-info" id="userInfo"></div>
+                </div>
+                <div class="grupos-list" id="gruposList"></div>
+                <div class="sidebar-footer">
+                    <button class="logout-btn" onclick="logout()">Cerrar sesión</button>
+                </div>
+            </div>
+
+            <!-- Chat -->
+            <div class="chat-container">
+                <div class="chat-header">
+                    <div>
+                        <h1 id="chatTitle">Selecciona un grupo</h1>
+                        <small id="groupInfo"></small>
+                    </div>
+                    <div class="header-buttons">
+                        <div class="status disconnected" id="status">
+                            <span class="status-dot"></span>
+                            <span id="statusText">Conectando...</span>
+                        </div>
+                        <button class="header-button" onclick="goHome()">← Volver</button>
+                    </div>
+                </div>
+                <div class="messages" id="messages">
+                    <div class="empty-state">
+                        <h3>👋 ¡Bienvenido!</h3>
+                        <p>Selecciona un grupo para empezar a chatear</p>
+                    </div>
+                </div>
+                <div class="input-area hidden" id="inputArea">
+                    <input type="text" id="messageInput" placeholder="Escribe tu mensaje..." />
+                    <button onclick="sendMessage()" id="sendBtn">Enviar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== CONFIGURACIÓN =====
+        // Detectar automáticamente el API_URL basado en donde se carga la página
+        let API_URL = 'http://127.0.0.1:5000'; // Default
+        
+        // Si estamos cargando desde un servidor (no localhost:5500), usar esa URL como base
+        if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+            // Estamos en un servidor remoto (10.0.2.2 del emulador)
+            API_URL = `http://${window.location.hostname}:${window.location.port || 5000}`;
+            console.log('🌐 Detectado servidor remoto:', API_URL);
+        }
+        // Si estamos en Capacitor (app nativa), usar 10.0.2.2
+        else if (typeof window.Capacitor !== 'undefined') {
+            API_URL = 'http://10.0.2.2:5000';
+            console.log('🔧 Capacitor detectado - usando 10.0.2.2');
+        }
+        // Si config.js se cargó, usarlo
+        else if (typeof CONFIG !== 'undefined' && CONFIG.API_BASE_URL) {
+            API_URL = CONFIG.API_BASE_URL;
+            console.log('✅ config.js cargado correctamente');
+        }
+        // Fallback: localhost en puerto 5000
+        else {
+            console.log('⚠️ Usando fallback: 127.0.0.1:5000');
+        }
+        
+        console.log('🔗 API_URL en chat:', API_URL);
+        
+        // ===== ERROR LOGGING SYSTEM (Persistent Storage) =====
+        const MAX_LOGS = 15;
+        
+        function addErrorLog(message, type = 'error') {
+            try {
+                const logs = JSON.parse(localStorage.getItem('marqunErrorLogs') || '[]');
+                const timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
+                logs.unshift({ type, message, timestamp, date: new Date().toISOString() });
+                if (logs.length > MAX_LOGS) logs = logs.slice(0, MAX_LOGS);
+                localStorage.setItem('marqunErrorLogs', JSON.stringify(logs));
+                updateErrorPanel();
+            } catch (e) {
+                console.error('Error storing log:', e);
+            }
+        }
+        
+        function getErrorLogs() {
+            try {
+                return JSON.parse(localStorage.getItem('marqunErrorLogs') || '[]');
+            } catch (e) {
+                return [];
+            }
+        }
+        
+        function clearErrorLogs() {
+            localStorage.removeItem('marqunErrorLogs');
+            updateErrorPanel();
+        }
+        
+        function updateErrorPanel() {
+            const panel = document.getElementById('errorPanel');
+            if (!panel) return;
+            const logs = getErrorLogs();
+            if (logs.length === 0) {
+                panel.innerHTML = '<p style="color: #999; font-size: 12px; padding: 10px;">✅ Sin errores</p>';
+                return;
+            }
+            const html = logs.map(log => `
+                <div style="padding: 8px; border-bottom: 1px solid #eee; font-size: 12px; font-family: monospace;">
+                    <span style="color: ${log.type === 'error' ? '#f44336' : log.type === 'warn' ? '#ff9800' : '#2196f3'}; font-weight: bold;">[${log.type.toUpperCase()}]</span>
+                    <span style="color: #666;">${log.timestamp}</span>
+                    <div style="color: #333; margin-top: 4px; word-break: break-word;">${log.message}</div>
+                </div>
+            `).join('');
+            panel.innerHTML = html + '<button onclick="clearErrorLogs()" style="width: 100%; padding: 8px; margin-top: 10px; background: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold;">🗑️ Limpiar errores</button>';
+        }
+        
+        // Logger helper
+        function log(...args) {
+            if (CONFIG.DEBUG_MODE) console.log('[MARQUN]', ...args);
+            addErrorLog(args.join(' '), 'info');
+        }
+        function err(...args) {
+            if (CONFIG.DEBUG_MODE) console.error('[MARQUN]', ...args);
+            addErrorLog(args.join(' '), 'error');
+        }
+        function warn(...args) {
+            if (CONFIG.DEBUG_MODE) console.warn('[MARQUN]', ...args);
+            addErrorLog(args.join(' '), 'warn');
+        }
+        
+        // ===== VARIABLES GLOBALES =====
+        let socket = null;
+        let token = null;
+        let grupoId = null;
+        let username = null;
+        let grupos = [];
+        let typingTimeout = null;
+
+        // ===== VERIFICAR TOKEN AL CARGAR =====
+        function initChat() {
+            // Leer token de sessionStorage
+            token = sessionStorage.getItem('marqunToken');
+            username = sessionStorage.getItem('marqunUsername');
+            
+            if (!token || !username) {
+                log('[INIT] No hay token en sesión, redirigiendo a login');
+                addErrorLog('❌ Sin token válido - redirigiendo a loginchat.html', 'warn');
+                setTimeout(() => {
+                    window.location.href = 'loginchat.html';
+                }, 1000);
+                return;
+            }
+            
+            log('[INIT] ✅ Token recuperado de sesión para:', username);
+            addErrorLog('✅ Sesión activa - Token válido', 'info');
+            
+            // Inicializar chat
+            document.getElementById('userInfo').textContent = `👤 ${username}`;
+            connectWebSocket();
+            loadUserGroups();
+        }
+
+        function login() {
+            // Esta función ya NO se usa - el login es en loginchat.html
+            log('[LOGIN] Función obsoleta - usar loginchat.html');
+        }
+
+        function loadUserGroups() {
+            fetch(API_URL + '/grupos', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            })
+            .then(r => r.json())
+            .then(data => {
+                grupos = data;
+                renderGroupsList();
+            })
+            .catch(err_obj => err('[GROUPS]', err_obj));
+        }
+
+        function renderGroupsList() {
+            const container = document.getElementById('gruposList');
+            container.innerHTML = '';
+
+            if (grupos.length === 0) {
+                container.innerHTML = '<p style="padding: 20px; text-align: center; color: #999;">No perteneces a ningún grupo</p>';
+                return;
+            }
+
+            grupos.forEach(grupo => {
+                const item = document.createElement('div');
+                item.className = 'grupo-item' + (grupoId === grupo.id ? ' active' : '');
+                item.onclick = () => selectGroup(grupo);
+                item.innerHTML = `
+                    <div class="grupo-item-name">📍 ${grupo.nombre}</div>
+                    <div class="grupo-item-count">${grupo.miembros_count} miembros</div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function selectGroup(grupo) {
+            grupoId = grupo.id;
+            document.getElementById('chatTitle').textContent = `💬 ${grupo.nombre}`;
+            document.getElementById('groupInfo').textContent = `${grupo.miembros_count} miembros`;
+            document.getElementById('inputArea').classList.remove('hidden');
+            renderGroupsList();
+
+            const container = document.getElementById('messages');
+            container.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #999;"><p>Cargando mensajes...</p></div>';
+
+            loadMessages();
+
+            if (socket) {
+                socket.emit('join_group', { token: token, grupo_id: grupoId });
+            }
+
+            document.getElementById('messageInput').focus();
+        }
+
+        function connectWebSocket() {
+            log('[SOCKET] Conectando WebSocket con token:', token ? 'PRESENTE' : 'FALTA TOKEN');
+            
+            socket = io(API_URL, {
+                auth: { token: token },
+                reconnection: true,
+                reconnectionDelay: 1000,
+                reconnectionDelayMax: 5000,
+                reconnectionAttempts: 10,
+                transports: ['websocket', 'polling']  // Intentar primero WebSocket
+            });
+
+            socket.on('connect', (data) => {
+                log('[SOCKET] ✅ Conectado exitosamente');
+                addErrorLog('✅ Socket.IO conectado exitosamente', 'info');
+                updateStatus('connected');
+                document.getElementById('status').style.color = 'green';
+            });
+
+            socket.on('reconnect', () => {
+                log('[SOCKET] 🔄 Reconectado');
+                addErrorLog('🔄 Reconexión establecida', 'info');
+                updateStatus('connected');
+                document.getElementById('status').style.color = 'green';
+            });
+
+            socket.on('reconnect_attempt', () => {
+                log('[SOCKET] 🔄 Intentando reconectar...');
+                addErrorLog('🔄 Intentando reconectar...', 'warn');
+            });
+
+            socket.on('nuevo_mensaje', (mensaje) => {
+                log('[SOCKET] Nuevo mensaje recibido:', mensaje);
+                addErrorLog('📨 Nuevo mensaje en Socket.IO', 'info');
+                if (mensaje.grupo_id === grupoId) {
+                    displayMessage(mensaje);
+                }
+            });
+
+            socket.on('connect_error', (error) => {
+                const errorMsg = error?.data?.content || String(error);
+                err('[SOCKET] ❌ Error de conexión:', errorMsg);
+                addErrorLog(`⚠️ Error conectando: ${errorMsg}`, 'error');
+                alert('⚠️ Error conectando WebSocket:\n' + errorMsg);
+                updateStatus('error');
+                document.getElementById('status').style.color = 'red';
+            });
+
+            socket.on('authentication_error', (error) => {
+                const errorMsg = error?.data?.content || error?.message || String(error);
+                err('[SOCKET] ❌ Error de autenticación:', errorMsg);
+                addErrorLog('🔓 WebSocket Auth Error: ' + errorMsg, 'error');
+                alert('⚠️ Error de autenticación WebSocket:\n' + errorMsg + '\n\nError guardado en el panel de logs.\n\nIntenta hacer login de nuevo.');
+                // NO HACER LOGOUT - solo mostrar error para que sea visible
+                if (document.getElementById('status')) {
+                    document.getElementById('status').style.color = 'orange';
+                }
+            });
+
+            socket.on('disconnect', (reason) => {
+                log('[SOCKET] ⚠️ Desconectado:', reason);
+                addErrorLog(`⚠️ Socket.IO desconectado: ${reason}`, 'warn');
+                updateStatus('disconnected');
+                if (reason === 'io server disconnect') {
+                    err('[SOCKET] Desconexión forzada del servidor');
+                    addErrorLog('🔌 Servidor desconectó la conexión', 'error');
+                    alert('⚠️ El servidor desconectó la conexión. Intenta hacer login de nuevo.');
+                }
+            });
+
+            socket.on('error', (data) => {
+                err('[SOCKET] Error general:', data);
+                addErrorLog('❌ Error general Socket.IO: ' + String(data), 'error');
+                alert('⚠️ Error WebSocket: ' + String(data));
+            });
+        }
+
+        function loadMessages() {
+            fetch(API_URL + `/grupos/${grupoId}/mensajes`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            })
+            .then(r => {
+                if (r.status === 401 || r.status === 403) {
+                    err('[LOAD] Token expirado, necesitas hacer login de nuevo');
+                    addErrorLog('⏱️ Token expirado - logout automático', 'error');
+                    setTimeout(() => logout(), 500);
+                    return null;
+                }
+                if (!r.ok) {
+                    warn('[LOAD] Error HTTP:', r.status);
+                    // NO hacer logout con otros errores - solo mostrar advertencia
+                    addErrorLog(`⚠️ Error cargando mensajes: HTTP ${r.status}`, 'warn');
+                    return null;
+                }
+                return r.json();
+            })
+            .then(mensajes => {
+                if (!mensajes) return;
+
+                const container = document.getElementById('messages');
+                container.innerHTML = '';
+                if (mensajes.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><h3>📭 Sin mensajes</h3><p>Sé el primero en escribir</p></div>';
+                } else {
+                    mensajes.forEach(msg => displayMessage(msg));
+                }
+                scrollToBottom();
+            })
+            .catch(err_obj => {
+                err('[LOAD] Error:', err_obj);
+                addErrorLog('❌ Error cargando mensajes: ' + String(err_obj), 'error');
+            });
+        }
+
+        function displayMessage(mensaje) {
+            const container = document.getElementById('messages');
+            if (container.querySelector('.empty-state')) {
+                container.innerHTML = '';
+            }
+
+            const isOwn = mensaje.usuario_nombre === username;
+            
+            const msgEl = document.createElement('div');
+            msgEl.className = 'message' + (isOwn ? ' own' : ' other');
+            
+            const time = new Date(mensaje.fecha_creacion).toLocaleTimeString('es-ES', 
+                { hour: '2-digit', minute: '2-digit' });
+            
+            msgEl.innerHTML = `
+                <div>
+                    <div class="message-content">${escapeHtml(mensaje.contenido)}</div>
+                    <div class="message-info">
+                        ${isOwn ? '✓ Tú' : `${mensaje.usuario_nombre}`} • ${time}
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(msgEl);
+            scrollToBottom();
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const content = input.value.trim();
+
+            if (!content || !grupoId) {
+                err('[SEND] Error: Sin contenido o grupoId');
+                return;
+            }
+
+            document.getElementById('sendBtn').disabled = true;
+            log('[SEND] Enviando mensaje. Token:', token ? token.substring(0, 20) + '...' : 'SIN TOKEN');
+            addErrorLog('🚀 Enviando mensaje...', 'info');
+
+            fetch(API_URL + `/grupos/${grupoId}/mensajes`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ contenido: content })
+            })
+            .then(r => {
+                log('[SEND] Respuesta HTTP:', r.status, r.statusText);
+                addErrorLog(`📤 Servidor respondió: ${r.status} ${r.statusText}`, 'info');
+                
+                // SOLO logout si es 401/403 (auth error real)
+                if (r.status === 401 || r.status === 403) {
+                    const msg = `Token inválido/expirado (HTTP ${r.status})`;
+                    log('[SEND] ⚠️', msg);
+                    addErrorLog('🔐 ' + msg, 'error');
+                    document.getElementById('sendBtn').disabled = false;
+                    setTimeout(() => {
+                        log('[SEND] Ejecutando logout');
+                        logout();
+                    }, 1000);
+                    return null;
+                }
+                
+                // Para otros errores, intentar parsear JSON
+                return r.json().then(data => {
+                    log('[SEND] Respuesta JSON:', data);
+                    return {
+                        status: r.status,
+                        data: data,
+                        ok: r.ok
+                    };
+                }).catch(parseErr => {
+                    err('[SEND] No se pudo parsear JSON:', parseErr);
+                    addErrorLog('⚠️ Respuesta no es JSON válido', 'warn');
+                    return {
+                        status: r.status,
+                        data: { error: 'Error de respuesta del servidor' },
+                        ok: r.ok
+                    };
+                });
+            })
+            .then(result => {
+                if (!result) {
+                    log('[SEND] Retorno nulo (logout)');
+                    return; // Si fue logout
+                }
+                
+                const { status, data, ok } = result;
+                log('[SEND] Procesando resultado. Status:', status, 'OK:', ok, 'Data:', data);
+                
+                // Si tiene error
+                if (data && data.error) {
+                    const errorMsg = data.error;
+                    err('[SEND] Error en respuesta:', errorMsg);
+                    addErrorLog('❌ Error: ' + errorMsg, 'error');
+                    alert('⚠️ Error: ' + errorMsg);
+                    document.getElementById('sendBtn').disabled = false;
+                    return;
+                }
+                
+                // Si es 201 o tiene ID (éxito)
+                if (status === 201 || data.id) {
+                    log('[SEND] ✅ Éxito');
+                    addErrorLog('✅ Mensaje enviado correctamente', 'info');
+                    input.value = '';
+                    input.focus();
+                    document.getElementById('sendBtn').disabled = false;
+                    return;
+                }
+                
+                // Si es OK pero no tenemos id/error
+                if (ok) {
+                    log('[SEND] ✅ Respuesta OK sin error');
+                    addErrorLog('✅ Mensaje procesado', 'info');
+                    input.value = '';
+                    input.focus();
+                    document.getElementById('sendBtn').disabled = false;
+                    return;
+                }
+                
+                // Status inesperado
+                log('[SEND] ⚠️ Status inesperado:', status);
+                addErrorLog(`⚠️ Status inesperado: ${status}`, 'warn');
+                document.getElementById('sendBtn').disabled = false;
+            })
+            .catch(networkErr => {
+                err('[SEND] Error de red:', networkErr);
+                addErrorLog('🌐 Error de red: ' + String(networkErr), 'error');
+                alert('⚠️ Error de conexión: ' + String(networkErr));
+                document.getElementById('sendBtn').disabled = false;
+            });
+        }
+
+        function scrollToBottom() {
+            const container = document.getElementById('messages');
+            setTimeout(() => {
+                container.scrollTop = container.scrollHeight;
+            }, 0);
+        }
+
+        function updateStatus(status) {
+            const el = document.getElementById('status');
+            const statusText = document.getElementById('statusText');
+            if (status === 'connected') {
+                el.className = 'status connected';
+                statusText.textContent = '✓ Conectado';
+            } else {
+                el.className = 'status disconnected';
+                statusText.textContent = '✗ Desconectado';
+            }
+        }
+
+        function logout() {
+            log('[LOGOUT] 🚪 Iniciando logout');
+            addErrorLog('🚪 LOGOUT ejecutado', 'warn');
+            if (socket) {
+                log('[LOGOUT] Desconectando socket');
+                socket.disconnect();
+            }
+            token = null;
+            grupoId = null;
+            username = null;
+            
+            // Limpiar sessionStorage
+            sessionStorage.removeItem('marqunToken');
+            sessionStorage.removeItem('marqunUsername');
+            
+            log('[LOGOUT] ✅ Logout completado - redirigiendo a loginchat.html');
+            addErrorLog('✅ Sesión cerrada - redirigiendo', 'info');
+            
+            // Redirigir a loginchat.html
+            setTimeout(() => {
+                window.location.href = 'loginchat.html';
+            }, 500);
+        }
+
+        function goHome() {
+            // Limpiar datos sin cerrar sesión (solo ir a inicio)
+            if (socket) socket.disconnect();
+            window.location.href = 'index.html';
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Enviar mensaje con Enter
+        document.addEventListener('DOMContentLoaded', () => {
+            // Inicializar panel de errores
+            updateErrorPanel();
+            
+            // Inicializar chat (cargar token y conectar)
+            initChat();
+            
+            // Registrar service worker para PWA
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(reg => {
+                        console.log('✅ Service Worker registrado', reg);
+                        log('✅ Modo offline activado (PWA)');
+                    })
+                    .catch(err => {
+                        console.error('❌ Error registrando Service Worker:', err);
+                        err('❌ Error con PWA: ' + String(err));
+                    });
+            }
+            
+            const input = document.getElementById('messageInput');
+            if (input) {
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        sendMessage();
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

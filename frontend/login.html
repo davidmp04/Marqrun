@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>MARQRun - Iniciar Sesión</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🏃 MARQRun</h1>
+
+    <div id="mensaje" class="mensaje" style="display:none;"></div>
+
+    <!-- LOGIN -->
+    <div class="card" id="loginBox">
+        <h3>Iniciar sesión</h3>
+        <input id="loginNombre" placeholder="Nombre de usuario" required>
+        <input id="loginPassword" type="password" placeholder="Contraseña" required>
+        <button onclick="login()">Entrar</button>
+        <p class="auth-footer">¿No tienes cuenta? <a href="register.html">Regístrate aquí</a></p>
+    </div>
+
+</div>
+
+<script src="js/utils.js"></script>
+<script src="js/auth.js"></script>
+
+</body>
+</html>

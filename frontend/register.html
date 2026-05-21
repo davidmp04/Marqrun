@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>MARQRun - Registrarse</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>🏃 MARQRun</h1>
+
+    <div id="mensaje" class="mensaje" style="display:none;"></div>
+
+    <div class="card" id="loginBox">
+        <h3>Crear cuenta</h3>
+        <input id="loginNombre" placeholder="Nombre de usuario" required>
+        <input id="loginPassword" type="password" placeholder="Contraseña" required>
+        <input id="loginPasswordConfirm" type="password" placeholder="Confirmar contraseña" required>
+        <button onclick="register()">Registrar</button>
+        <p class="auth-footer">¿Ya tienes cuenta? <a href="login.html">Inicia sesión aquí</a></p>
+    </div>
+</div>
+
+<script src="js/utils.js"></script>
+<script src="js/auth.js"></script>
+
+</body>
+</html>

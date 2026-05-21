@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>MARQRun - Dashboard</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body class="dashboard-page">
+
+<button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+
+<div id="header">
+    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+    <img id="profilePic" src="assets/default-avatar.svg" alt="Perfil" onclick="toggleDropdown()">
+    <div id="dropdown">
+        <button onclick="window.location.href='profile.html'">Ver Perfil</button>
+        <button id="adminDropdownButton" onclick="window.location.href='./admin.html'" style="display:none;">Admin</button>
+        <button onclick="logout()">Cerrar Sesión</button>
+    </div>
+</div>
+
+<div class="container dashboard-page">
+
+    <div class="sidebar" id="sidebar">
+        <ul>
+            <li><a href="index.html">Grupos</a></li>
+            <li><a href="entrenamientos.html">Entrenamientos</a></li>
+            <li><a href="#" onclick="showSection(event, this, 'dashboard');" class="active">Dashboard</a></li>
+            <li><a href="chat.html">Chat Grupal</a></li>
+            <li id="adminNavLink" style="display:none;"><a href="./admin.html" onclick="window.location.href='./admin.html'">Admin</a></li>
+        </ul>
+    </div>
+    <div class="main-content dashboard-main">
+
+        <div class="dashboard-topbar">
+            <div>
+                <p class="eyebrow">Panel de control</p>
+                <h1>Dashboard del grupo</h1>
+                <p id="userRoleLabelDashboard" class="subtitle" style="margin-top: 0.25rem; font-size: 0.95rem; color: #777;">Rol: no disponible</p>
+            </div>
+            <div class="topbar-actions">
+            </div>
+        </div>
+
+        <div id="dashboardEmptyState" class="dashboard-empty-state">Selecciona un grupo en la página Grupos para ver las estadísticas del dashboard. Si ya seleccionaste uno, revisa tu selección o vuelve a cargar la página.</div>
+        <div id="mensaje" class="mensaje" style="display:none;"></div>
+
+        <section class="dashboard-grid">
+            <article class="stat-card">
+                <p class="stat-label">Miembros activos</p>
+                <h2 id="membersCount">0</h2>
+                <p class="stat-note">Personas que ya forman parte del grupo.</p>
+            </article>
+            <article class="stat-card">
+                <p class="stat-label">Entrenamientos totales</p>
+                <h2 id="trainingCount">0</h2>
+                <p class="stat-note">Entrenamientos planeados o completados.</p>
+            </article>
+            <article class="stat-card">
+                <p class="stat-label">Asistencias registradas</p>
+                <h2 id="attendanceCount">0</h2>
+                <p class="stat-note">Marcas de asistencia en los entrenamientos.</p>
+            </article>
+            <article class="stat-card">
+                <p class="stat-label">Próximo evento</p>
+                <h2 id="nextEventTitle">Ninguno</h2>
+                <p class="stat-note" id="nextEventSubtitle">Selecciona un grupo para ver el siguiente entrenamiento.</p>
+            </article>
+        </section>
+
+        <section class="dashboard-panels">
+            <div class="panel card">
+                <div class="panel-header">
+                    <h2>Resumen del grupo</h2>
+                </div>
+                <div id="groupSummary" class="panel-content">
+                    <p>Selecciona un grupo para ver información detallada.</p>
+                </div>
+            </div>
+
+            <div class="panel card">
+                <div class="panel-header">
+                    <h2>Actividad reciente</h2>
+                </div>
+                <div class="panel-content">
+                    <ul id="recentActivity" class="activity-list">
+                        <li>No hay actividad para mostrar.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel card">
+            <div class="panel-header">
+                <h2>Entrenamientos activos</h2>
+            </div>
+            <div class="panel-content" id="activeEvents">
+                <p>No hay entrenamientos activos en este momento.</p>
+            </div>
+        </section>
+
+    </div>
+
+</div>
+
+<script src="js/utils.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/groups.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/main.js"></script>
+
+</body>
+</html>

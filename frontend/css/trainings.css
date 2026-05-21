@@ -1,0 +1,473 @@
+.trainings-page {
+    background: var(--page-bg);
+}
+
+.trainings-container {
+    max-width: 1200px;
+    width: 100%;
+    margin: auto;
+    min-height: 100vh;
+    display: flex;
+    gap: 20px;
+    padding: 18px;
+}
+
+@media (max-width: 768px) {
+    .trainings-container {
+        flex-direction: column;
+        gap: 10px;
+        padding: 12px;
+    }
+}
+
+.trainings-main {
+    flex: 1;
+    padding-top: 20px;
+}
+
+.trainings-topbar {
+    display: flex;
+    justify-content: space-between;
+    gap: 1.5rem;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+}
+
+.trainings-topbar .eyebrow {
+    margin: 0 0 0.5rem;
+    color: var(--secondary-text);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.8rem;
+}
+
+.trainings-topbar h1 {
+    margin: 0;
+    font-size: 2.3rem;
+}
+
+.trainings-topbar .subtitle {
+    margin: 0.75rem 0 0;
+    color: var(--secondary-text);
+    max-width: 640px;
+}
+
+@media (max-width: 768px) {
+    .trainings-topbar {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .trainings-topbar h1 {
+        font-size: 1.8rem;
+    }
+}
+
+.topbar-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.stat-card {
+    padding: 1.4rem;
+    border-radius: 20px;
+    background: var(--card-bg);
+    box-shadow: var(--card-shadow);
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.stat-label {
+    margin: 0 0 0.75rem;
+    color: var(--secondary-text);
+    font-size: 0.95rem;
+}
+
+.stat-card h2 {
+    margin: 0;
+    font-size: 2.2rem;
+    color: var(--accent-color);
+}
+
+.stat-note {
+    margin: 0.75rem 0 0;
+    color: var(--secondary-text);
+    font-size: 0.95rem;
+}
+
+.trainings-layout {
+    display: grid;
+    grid-template-columns: 1.25fr 0.75fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+    .trainings-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .trainings-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+.training-panel {
+    min-height: 340px;
+}
+
+.training-panel[style*="pointer-events: none"] {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.panel {
+    padding: 1.5rem;
+    border-radius: 18px;
+    background: var(--card-bg);
+    box-shadow: var(--card-shadow);
+}
+
+.panel-header {
+    margin-bottom: 1rem;
+}
+
+.panel-header h2 {
+    margin: 0;
+}
+
+.panel-content {
+    display: grid;
+    gap: 1rem;
+}
+
+.info-text {
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.18);
+    padding: 0.9rem 1rem;
+    border-radius: 14px;
+    color: var(--text-color);
+}
+
+.form-grid {
+    display: grid;
+    gap: 1rem;
+}
+
+.form-grid label {
+    display: grid;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.form-grid input[type="text"],
+.form-grid input[type="date"],
+.form-grid input[type="time"] {
+    width: 100%;
+    padding: 0.95rem 1rem;
+    border-radius: 14px;
+    border: 1px solid var(--border-color);
+    background: var(--input-bg);
+    color: var(--text-color);
+}
+
+.dificultad-group {
+    display: grid;
+    gap: 0.6rem;
+}
+
+.radio-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.radio-row label {
+    display: inline-flex;
+    gap: 0.4rem;
+    align-items: center;
+    font-weight: 500;
+}
+
+.training-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 1rem;
+}
+
+.training-list li {
+    background: rgba(100, 116, 139, 0.08);
+    border-radius: 16px;
+    padding: 1rem;
+}
+
+.training-list .card {
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+}
+
+.training-list button {
+    margin-top: 0.75rem;
+}
+
+.page-empty-state {
+    border: 1px dashed var(--border-color);
+    background: var(--card-bg);
+    color: var(--secondary-text);
+    padding: 1.25rem 1.5rem;
+    border-radius: 18px;
+    margin-bottom: 1.5rem;
+    font-size: 0.98rem;
+    line-height: 1.6;
+}
+
+.upcoming-grid {
+    display: grid;
+    gap: 0.9rem;
+}
+
+.event-card {
+    padding: 1rem;
+    border-radius: 16px;
+    background: rgba(34, 197, 94, 0.08);
+    border: 1px solid rgba(34, 197, 94, 0.18);
+}
+
+/* Estilos para filtros */
+.filter-panel {
+    margin-top: 1.5rem;
+}
+
+.filter-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+}
+
+.btn-secondary {
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.btn-secondary:hover {
+    background: var(--accent-hover, #2563eb);
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.btn-outline:hover {
+    background: var(--border-color);
+}
+
+@media (max-width: 768px) {
+    .filter-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-actions {
+        flex-direction: column;
+    }
+}
+
+/* Estilos para calendario */
+.calendar-panel {
+    margin-top: 1.5rem;
+}
+
+.calendar-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.calendar-nav h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--text-color);
+}
+
+.btn-nav {
+    background: var(--accent-color);
+    color: white;
+    border: 1px solid var(--border-color);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.btn-nav:hover {
+    background: var(--accent-hover, #2563eb);
+    border-color: var(--accent-hover, #2563eb);
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    margin-top: 1rem;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0.25rem;
+    border-radius: 8px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    transition: all 0.2s;
+    position: relative;
+    min-height: 60px;
+}
+
+.calendar-day:hover {
+    background: var(--hover-bg, rgba(0, 0, 0, 0.05));
+}
+
+.calendar-day-header {
+    font-weight: bold;
+    color: var(--secondary-text);
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+}
+
+.calendar-day-number {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.calendar-event {
+    background: var(--accent-color);
+    color: white;
+    padding: 0.125rem 0.25rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    margin: 0.125rem 0;
+    width: 100%;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.calendar-event:hover {
+    background: var(--accent-hover, #2563eb);
+}
+
+.calendar-day.other-month {
+    opacity: 0.4;
+}
+
+.calendar-day.today {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: var(--accent-color);
+}
+
+.primary,
+button.primary,
+button.secondary {
+    border: none;
+    border-radius: 999px;
+    padding: 0.9rem 1.2rem;
+    cursor: pointer;
+}
+
+button.primary {
+    background: var(--button-bg);
+    color: white;
+}
+
+button.secondary {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+}
+
+button.secondary:hover,
+button.primary:hover {
+    opacity: 0.95;
+}
+
+@media (max-width: 1024px) {
+    .trainings-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, minmax(180px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .trainings-container {
+        flex-direction: column;
+    }
+
+    .topbar-actions {
+        justify-content: stretch;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>MARQRun - Dashboard</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+
+<body>
+
+<button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+
+<div class="container">
+
+    <div class="sidebar" id="sidebar">
+        <ul>
+            <li><a href="#" onclick="showSection(event, this, 'grupos');" class="active">Grupos</a></li>
+            <li><a href="entrenamientos.html">Entrenamientos</a></li>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="loginchat.html">Chat Grupal</a></li>
+            <li id="adminNavLink" style="display:none;"><a href="./admin.html" onclick="window.location.href='./admin.html'">Admin</a></li>
+        </ul>
+    </div>
+    <div class="main-content">
+
+        <h1>🏃 MARQRun</h1>
+
+        <div id="mensaje" class="mensaje" style="display:none;"></div>
+
+        <!-- HEADER -->
+        <div id="header" style="position: fixed; top: 10px; right: 10px; z-index: 100; display: flex; align-items: center; gap: 10px;">
+            <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+            <img id="profilePic" src="assets/default-avatar.svg" alt="Perfil" style="width: 40px; height: 40px; border-radius: 50%; cursor: pointer; border: 2px solid #ddd;" onclick="toggleDropdown()">
+            <span id="userRoleBadge" class="role-badge">MIEMBRO</span>
+            <div id="dropdown" style="display: none; position: absolute; right: 0; top: 50px; background: white; border: 1px solid #ccc; border-radius: 4px; padding: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+                <button onclick="window.location.href='profile.html'" style="display: block; width: 100%; margin-bottom: 5px; padding: 5px;">Ver Perfil</button>
+                <button id="adminDropdownButton" onclick="window.location.href='./admin.html'" style="display:none; width: 100%; margin-bottom: 5px; padding: 5px;">Admin</button>
+                <button onclick="logout()" style="display: block; width: 100%; padding: 5px;">Cerrar Sesión</button>
+            </div>
+        </div>
+
+        <!-- APP -->
+        <div id="app">
+
+            <div id="section-grupos" class="section active">
+                <div class="card">
+                    <h3 id="bienvenida"></h3>
+                    <p id="miPerfil"></p>
+                </div>
+
+                <div class="card">
+                    <h3>Grupo</h3>
+                    <div id="crearGrupoPanel">
+                        <input id="nombreGrupo" placeholder="Nombre del grupo">
+                        <select id="tipoGrupo">
+                            <option value="publico">Público</option>
+                            <option value="privado">Privado</option>
+                        </select>
+                        <input id="passwordGrupo" type="password" placeholder="Contraseña del grupo (sólo privado)">
+                        <button onclick="crearGrupo()">Crear</button>
+                    </div>
+                    <div id="createGroupNotice" style="margin-top: 0.75rem; color: #555; font-size: 0.95rem;"></div>
+                    <div class="role-description" style="margin-top: 1rem; padding: 1rem; border-radius: 12px; background: #f8fafc; border: 1px solid #e2e8f0; color: #111827;">
+                        <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1rem;">¿Qué significa cada rol?</h4>
+                        <p style="margin: 0.25rem 0;"><strong>Miembro:</strong> usuario básico. Puede unirse a grupos y participar en entrenamientos.</p>
+                        <p style="margin: 0.25rem 0;"><strong>Coordinador principal:</strong> creador del grupo. Puede administrar el grupo, gestionar miembros, borrar el grupo y crear entrenamientos.</p>
+                        <p style="margin: 0.25rem 0;"><strong>Coordinador:</strong> miembro del grupo con permisos para crear entrenamientos y gestionar la actividad del grupo.</p>
+                    </div>
+                    <select id="selectGrupo" onchange="onGrupoSeleccionado()"></select>
+                    <div id="grupoStatus" style="margin-top: 0.75rem; color: #555; font-size: 0.95rem;"></div>
+                    <input id="passwordUnirme" type="password" placeholder="Contraseña para unirme si es privado" style="display:none">
+                    <button class="secondary" id="botonUnirmeGrupo" onclick="unirseGrupo()">Unirme a este grupo</button>
+                    <button class="secondary" id="botonSalirGrupo" style="display: none; margin-left: 0.5rem;" onclick="salirGrupo()">Salir del grupo</button>
+                    <button class="secondary" id="botonBorrarGrupo" style="display: none; margin-left: 0.5rem; background: #d9534f; border-color: #d43f3a;" onclick="borrarGrupo()">Borrar grupo</button>
+                    <div id="grupoDetalle" style="margin-top: 1rem;">Selecciona un grupo para ver detalles.</div>
+                    <div id="gruposDisponibles" style="margin-top: 1rem;"></div>
+                </div>
+            </div>
+
+            <div id="section-entrenamientos" class="section">
+                <div class="card" id="sinGrupoMessage">
+                    <h3>Selecciona un grupo</h3>
+                    <p>Selecciona un grupo para poder ver los entrenamientos o crear uno nuevo y ver el dashboard del grupo.</p>
+                </div>
+
+                <div class="card" id="crearEntrenamientoCard" style="display:none;">
+                    <h3>Crear Entrenamiento Nuevo</h3>
+                    <div id="trainingsNotice" class="info-text"></div>
+                    <input type="date" id="fecha">
+                    <input type="time" id="hora">
+                    <input id="tipo" placeholder="Tipo">
+                    <input id="ubicacion" placeholder="Ubicación (opcional)">
+                    <div id="dificultadRadios" style="margin: 0.5rem 0; display: flex; gap: 1.5rem;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem;"><input type="radio" name="dificultad" value="fácil"> Fácil</label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;"><input type="radio" name="dificultad" value="medio"> Medio</label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;"><input type="radio" name="dificultad" value="alto"> Alto</label>
+                    </div>
+                    <button onclick="crearEntrenamiento()">Crear</button>
+                </div>
+
+                <div class="card" id="entrenamientosCard" style="display:none;">
+                    <h3 id="entrenamientosTitle">Entrenamientos</h3>
+                    <ul id="listaEntrenamientos"></ul>
+                </div>
+            </div>
+
+            <div id="section-dashboard" class="section">
+                <div class="card" id="dashboardCard" style="display:none;">
+                    <h3>Dashboard del grupo</h3>
+                    <div id="dashboardInfo">Selecciona un grupo para ver estadísticas.</div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- MODAL EDITAR PERFIL -->
+<div id="editProfileModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+    <div style="background: white; padding: 2rem; border-radius: 8px; max-width: 500px; width: 90%; max-height: 80%; overflow-y: auto;">
+        <h3>Editar perfil</h3>
+        <input id="modalEditNombre" placeholder="Nuevo nombre">
+        <textarea id="modalEditBio" placeholder="Biografía (opcional)" rows="3" style="resize: vertical;"></textarea>
+        <input id="modalEditLocation" placeholder="Ubicación personal (opcional)">
+        <input id="modalEditAvatarUrl" placeholder="URL del avatar (opcional)">
+        <input type="file" id="modalEditAvatarFile" accept="image/*" onchange="previewAvatarFileModal()">
+        <div id="modalAvatarPreviewContainer" style="margin: 0.5rem 0; display: none;">
+            <img id="modalAvatarPreviewImage" alt="Vista previa avatar" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd;">
+        </div>
+        <button onclick="guardarPerfilModal()">Guardar cambios</button>
+        <button class="secondary" onclick="cerrarModal()">Cancelar</button>
+    </div>
+</div>
+
+<!-- AVATAR LIGHTBOX -->
+<div id="avatarLightbox" class="avatar-lightbox" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 2000; justify-content: center; align-items: center; padding: 1rem;">
+    <div class="avatar-lightbox-inner" style="position: relative; max-width: 95%; max-height: 95%; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 0.75rem;">
+        <img id="avatarLightboxImage" src="" alt="Avatar grande" style="max-width: 100%; max-height: 80vh; border-radius: 20px; object-fit: contain; box-shadow: 0 0 24px rgba(0,0,0,0.35);">
+        <p id="avatarLightboxCaption" style="color: white; margin: 0; font-size: 1rem; text-align: center;"></p>
+        <button onclick="hideAvatarLightbox()" style="padding: 0.75rem 1.2rem; border: none; border-radius: 999px; background: rgba(255,255,255,0.95); cursor: pointer; font-weight: 600;">Cerrar</button>
+    </div>
+</div>
+
+<!-- CONFIRMATION MODAL -->
+<div id="confirmModal" class="confirm-modal-backdrop" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 3000; justify-content: center; align-items: center; padding: 1rem;">
+    <div class="confirm-modal" style="background: white; border-radius: 16px; width: min(480px, 100%); padding: 1.5rem; box-shadow: 0 20px 50px rgba(0,0,0,0.2); color: #222;">
+        <h3 id="confirmModalTitle" style="margin-top:0; margin-bottom:0.75rem;">Confirmación</h3>
+        <p id="confirmModalMessage" style="line-height: 1.6; margin: 0;">¿Estás seguro?</p>
+        <div class="confirm-modal-buttons" style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem; flex-wrap: wrap;">
+            <button id="confirmCancelButton" class="secondary" type="button" style="min-width: 96px;">No</button>
+            <button id="confirmOkButton" type="button" style="min-width: 96px;">Sí</button>
+        </div>
+    </div>
+</div>
+
+<script src="js/utils.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/groups.js"></script>
+<script src="js/trainings.js"></script>
+<script src="js/profile.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/main.js"></script>
+
+</body>
+</html>

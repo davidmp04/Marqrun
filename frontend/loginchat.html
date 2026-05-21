@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#667eea">
+    <meta name="description" content="Aplicación de chat en tiempo real para MARQRun">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="MARQRun">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23667eea' width='192' height='192'/><text x='50%' y='50%' font-size='120' text-anchor='middle' dy='.3em' fill='white'>💬</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23667eea' width='192' height='192'/><text x='50%' y='50%' font-size='120' text-anchor='middle' dy='.3em' fill='white'>💬</text></svg>">
+    <title>💬 Login - MARQRun Chat</title>
+    <script src="config.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .login-container h1 {
+            margin-bottom: 30px;
+            color: #333;
+            text-align: center;
+            font-size: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: transform 0.2s;
+            margin-bottom: 10px;
+        }
+
+        .login-btn:hover {
+            transform: scale(1.02);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .home-btn {
+            width: 100%;
+            padding: 12px;
+            background: #999;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: transform 0.2s;
+            margin-bottom: 10px;
+        }
+
+        .home-btn:hover {
+            transform: scale(1.02);
+        }
+
+        .error {
+            color: #f44336;
+            font-size: 12px;
+            margin-top: 5px;
+            text-align: center;
+        }
+
+        .success {
+            color: #4caf50;
+            font-size: 12px;
+            margin-top: 5px;
+            text-align: center;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>💬 MARQRun Chat</h1>
+        
+        <div class="form-group">
+            <label>Usuario</label>
+            <input type="text" id="username" placeholder="Tu usuario" />
+        </div>
+        
+        <div class="form-group">
+            <label>Contraseña</label>
+            <input type="password" id="password" placeholder="Tu contraseña" />
+        </div>
+        
+        <button class="login-btn" onclick="login()" id="loginBtn">🔐 Conectar</button>
+        <button class="home-btn" onclick="goHome()">← Volver a inicio</button>
+        
+        <div class="error" id="loginError"></div>
+        <div class="success" id="loginSuccess"></div>
+    </div>
+
+    <script src="config.js"></script>
+    <script>
+        // Detectar automáticamente el API_URL basado en donde se carga la página
+        let API_URL = 'http://127.0.0.1:5000'; // Default
+        
+        // Si estamos cargando desde un servidor (no localhost:5500), usar esa URL como base
+        if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+            // Estamos en un servidor remoto (10.0.2.2 del emulador)
+            API_URL = `http://${window.location.hostname}:${window.location.port || 5000}`;
+            console.log('🌐 Detectado servidor remoto:', API_URL);
+        }
+        // Si estamos en Capacitor (app nativa), usar 10.0.2.2
+        else if (typeof window.Capacitor !== 'undefined') {
+            API_URL = 'http://10.0.2.2:5000';
+            console.log('🔧 Capacitor detectado - usando 10.0.2.2');
+        }
+        // Si config.js se cargó, usarlo
+        else if (typeof CONFIG !== 'undefined' && CONFIG.API_BASE_URL) {
+            API_URL = CONFIG.API_BASE_URL;
+            console.log('✅ config.js cargado correctamente');
+        }
+        // Fallback: localhost en puerto 5000
+        else {
+            console.log('⚠️ Usando fallback: 127.0.0.1:5000');
+        }
+        
+        console.log('🔗 API_URL:', API_URL);
+
+        function warn(message) {
+            if (CONFIG.DEBUG_MODE) console.warn('[LOGIN]', message);
+            addLog(message, 'warn');
+        }
+
+        function login() {
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value.trim();
+
+            if (!user || !pass) {
+                const msg = '❌ Por favor completa todos los campos';
+                document.getElementById('loginError').textContent = msg;
+                return;
+            }
+
+            document.getElementById('loginBtn').disabled = true;
+            document.getElementById('loginError').textContent = '';
+
+            const loginUrl = API_URL + '/login';
+            console.log('📤 Intentando POST a:', loginUrl);
+            console.log('👤 Usuario:', user);
+
+            fetch(loginUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nombre: user, password: pass })
+            })
+            .then(r => {
+                return r.json().catch(parseErr => {
+                    throw new Error('Respuesta inválida del servidor');
+                });
+            })
+            .then(data => {
+                if (data.error) {
+                    const msg = '❌ ' + data.error;
+                    document.getElementById('loginError').textContent = msg;
+                    document.getElementById('loginBtn').disabled = false;
+                    return;
+                }
+
+                if (!data.token) {
+                    const msg = '❌ Error: no se recibió token';
+                    document.getElementById('loginError').textContent = msg;
+                    document.getElementById('loginBtn').disabled = false;
+                    return;
+                }
+                
+                // Guardar en sessionStorage
+                sessionStorage.setItem('marqunToken', data.token);
+                sessionStorage.setItem('marqunUsername', user);
+                
+                // Redirigir a chat.html después de 1 segundo
+                setTimeout(() => {
+                    window.location.href = 'chat.html';
+                }, 1000);
+            })
+            .catch(networkErr => {
+                const msg = '❌ Error de conexión: ' + String(networkErr);
+                err(msg);
+                document.getElementById('loginError').textContent = msg;
+                document.getElementById('loginBtn').disabled = false;
+            });
+        }
+
+        function goHome() {
+            window.location.href = 'index.html';
+        }
+
+        // Inicializar panel de logs
+        document.addEventListener('DOMContentLoaded', () => {
+            updateDebugPanel();
+            log('📄 Página loginchat.html cargada');
+            
+            // Registrar service worker para PWA
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(reg => {
+                        console.log('✅ Service Worker registrado', reg);
+                        log('✅ Modo offline activado (PWA)');
+                    })
+                    .catch(err => {
+                        console.error('❌ Error registrando Service Worker:', err);
+                        log('❌ Error con PWA: ' + String(err));
+                    });
+            }
+        });
+    </script>
+</body>
+</html>

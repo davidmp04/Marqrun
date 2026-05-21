@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>MARQRun - Admin</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin-page">
+
+<button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+
+<div id="header">
+    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+    <img id="profilePic" src="assets/default-avatar.svg" alt="Perfil" onclick="toggleDropdown()">
+    <div id="dropdown">
+        <button onclick="window.location.href='profile.html'">Ver Perfil</button>
+        <button onclick="logout()">Cerrar Sesión</button>
+    </div>
+</div>
+
+<div class="container admin-container">
+    <div class="sidebar" id="sidebar">
+        <ul>
+            <li><a href="index.html">Grupos</a></li>
+            <li><a href="entrenamientos.html">Entrenamientos</a></li>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="chat.html">Chat Grupal</a></li>
+            <li id="adminNavLink" style="display:none;"><a href="admin.html" class="active">Admin</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content admin-main">
+        <div class="admin-topbar">
+            <div>
+                <p class="eyebrow">Administración</p>
+                <h1>Panel de administración</h1>
+                <p id="adminSubtitle" class="subtitle">Gestiona usuarios, roles, cuentas desactivadas y revisa las acciones importantes.</p>
+            </div>
+        </div>
+
+        <div id="mensaje" class="mensaje" style="display:none;"></div>
+
+        <section class="panel card admin-panel">
+            <div class="panel-header">
+                <h2>Usuarios</h2>
+                <p>Lista completa de usuarios con roles, estado y grupos asociados.</p>
+            </div>
+            <div class="panel-content">
+                <div class="admin-stats">
+                    <div><strong id="totalUsers">0</strong> usuarios</div>
+                    <div><strong id="totalAdmins">0</strong> admins</div>
+                    <div><strong id="totalGestores">0</strong> gestores</div>
+                    <div><strong id="totalDisabled">0</strong> desactivados</div>
+                </div>
+                <div class="admin-role-summary" style="margin-top: 1rem; padding: 1rem; background: #f7f9ff; border-radius: 14px; border: 1px solid #dbeafe; color: #1f2937;">
+                    <strong>Roles globales dentro de la app:</strong>
+                    <p style="margin: 0.5rem 0 0;">• <strong>Admin:</strong> acceso completo al panel, gestión de usuarios, roles, cuentas desactivadas y logs.</p>
+                    <p style="margin: 0.25rem 0 0;">• <strong>Gestor:</strong> puede crear nuevos grupos pero no puede cambiar roles ni desactivar cuentas.</p>
+                    <p style="margin: 0.25rem 0 0;">• <strong>Miembro:</strong> participa en grupos y entrenamientos sin capacidades de administración global.</p>
+                </div>
+                <div class="table-responsive">
+                    <table id="adminUsersTable">
+                        <thead>
+                            <tr>
+                                <th>Usuario</th>
+                                <th>Rol</th>
+                                <th>Estado</th>
+                                <th>Grupos</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel card admin-log-panel">
+            <div class="panel-header">
+                <h2>Logs de administración</h2>
+                <p>Últimas acciones importantes realizadas por administradores.</p>
+            </div>
+            <div class="panel-content">
+                <div id="adminLogs" class="logs-list">
+                    <p>Cargando logs...</p>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<script src="js/utils.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

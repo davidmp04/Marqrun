@@ -1,0 +1,417 @@
+/* Estilos para la interfaz principal y el dashboard */
+
+.container {
+    max-width: 1100px;
+    width: 100%;
+    margin: auto;
+    background: var(--container-bg);
+    padding: 15px;
+    min-height: 100vh;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    transition: background 0.3s;
+}
+
+.sidebar {
+    width: 240px;
+    background: var(--sidebar-bg);
+    padding: 20px;
+    border-right: 1px solid var(--sidebar-border);
+    transition: background 0.3s, border-color 0.3s;
+    position: relative;
+    overflow-y: auto;
+}
+
+.main-content {
+    flex: 1;
+    padding-top: 20px;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar li {
+    margin: 10px 0;
+}
+
+.sidebar a {
+    color: var(--text-color);
+    text-decoration: none;
+    display: block;
+    padding: 10px;
+    border-radius: 6px;
+    transition: background 0.3s;
+}
+
+.sidebar a:hover, .sidebar a.active {
+    background: var(--button-bg);
+    color: white;
+}
+
+button.menu-toggle {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background: var(--button-bg);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    z-index: 101;
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: none;
+        border-right: none;
+        z-index: 100;
+        background: var(--sidebar-bg);
+        padding-top: 80px;
+    }
+    .sidebar.show {
+        display: block;
+    }
+    .menu-toggle {
+        display: block !important;
+    }
+    .main-content {
+        padding-left: 0;
+        padding-top: 85px;
+    }
+    #header {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        z-index: 101;
+    }
+}
+
+.member-avatar {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.member-avatar:hover {
+    transform: scale(1.05);
+}
+
+.avatar-lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+}
+
+.avatar-lightbox-inner {
+    max-width: 95%;
+    max-height: 95%;
+    width: 100%;
+}
+
+.avatar-lightbox img {
+    max-width: 100%;
+    max-height: 80vh;
+    border-radius: 20px;
+    object-fit: contain;
+}
+/* Dashboard page improvements */
+.dashboard-page .dashboard-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.dashboard-page .eyebrow {
+    margin: 0 0 0.5rem;
+    color: var(--secondary-text);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-size: 0.8rem;
+}
+
+.dashboard-page .subtitle {
+    color: var(--secondary-text);
+    max-width: 620px;
+    margin: 0;
+}
+
+.role-badge {
+    display: inline-block;
+    border-radius: 999px;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #fff;
+    background: #6b7280;
+    white-space: nowrap;
+}
+.role-badge.admin {
+    background: #1d4ed8;
+}
+.role-badge.coordinador {
+    background: #0ea5e9;
+}
+.role-badge.miembro {
+    background: #6b7280;
+}
+
+.dashboard-empty-state {
+    border: 1px dashed var(--border-color);
+    background: var(--card-bg);
+    color: var(--secondary-text);
+    padding: 1.25rem 1.5rem;
+    border-radius: 18px;
+    margin-bottom: 1.5rem;
+}
+
+.dashboard-page .topbar-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    width: 100%;
+    max-width: 320px;
+}
+
+.dashboard-page label {
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.dashboard-page select {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    background: var(--input-bg);
+    color: var(--text-color);
+}
+
+.dashboard-page .topbar-buttons {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.dashboard-page .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.dashboard-page .stat-card {
+    padding: 1.5rem;
+    border-radius: 20px;
+    background: var(--card-bg);
+    box-shadow: var(--card-shadow);
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.dashboard-page .stat-label {
+    margin: 0 0 0.8rem;
+    color: var(--secondary-text);
+    font-size: 0.9rem;
+}
+
+.dashboard-page .stat-card h2 {
+    margin: 0;
+    font-size: 2.5rem;
+    color: var(--accent-color);
+}
+
+.dashboard-page .stat-note {
+    margin: 0.8rem 0 0;
+    color: var(--secondary-text);
+    font-size: 0.95rem;
+}
+
+.dashboard-page .dashboard-panels {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.dashboard-page .panel {
+    padding: 1.5rem;
+    border-radius: 18px;
+    background: var(--card-bg);
+    box-shadow: var(--card-shadow);
+}
+
+.dashboard-page .panel-header {
+    margin-bottom: 1rem;
+}
+
+.dashboard-page .panel-header h2 {
+    margin: 0;
+}
+
+.dashboard-page .panel-content {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.dashboard-page .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(140px, 1fr));
+    gap: 1rem;
+}
+
+.dashboard-page .progress-section {
+    margin-top: 1rem;
+}
+
+.dashboard-page .progress-row {
+    display: grid;
+    gap: 0.35rem;
+    margin-top: 0.5rem;
+}
+
+.dashboard-page .progress-row span {
+    font-size: 0.95rem;
+    color: var(--secondary-text);
+}
+
+.dashboard-page .progress-bar {
+    width: 100%;
+    background: rgba(100, 116, 139, 0.15);
+    border-radius: 999px;
+    height: 12px;
+    overflow: hidden;
+}
+
+.dashboard-page .progress-bar div {
+    height: 100%;
+    background: var(--button-bg);
+    border-radius: 999px;
+}
+
+.dashboard-page .activity-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+}
+
+.dashboard-page .activity-list li {
+    padding: 0.9rem 1rem;
+    border-radius: 14px;
+    background: rgba(100, 116, 139, 0.08);
+}
+
+.dashboard-page .upcoming-grid {
+    display: grid;
+    gap: 1rem;
+}
+
+.dashboard-page .event-card {
+    padding: 1rem;
+    border-radius: 16px;
+    background: rgba(59, 130, 246, 0.08);
+    border: 1px solid rgba(59, 130, 246, 0.18);
+}
+
+.dashboard-page .topbar-buttons button.secondary,
+.dashboard-page .dashboard-page button.secondary,
+button.secondary {
+    border: 1px solid var(--border-color);
+    background: transparent;
+    color: var(--text-color);
+    border-radius: 999px;
+    padding: 0.85rem 1rem;
+    cursor: pointer;
+}
+
+.dashboard-page .topbar-buttons button.secondary:hover,
+button.secondary:hover {
+    background: rgba(59, 130, 246, 0.08);
+}
+
+@media (max-width: 1024px) {
+    .dashboard-page .dashboard-grid,
+    .dashboard-page .dashboard-panels {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-page .dashboard-topbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .dashboard-page .topbar-buttons {
+        justify-content: stretch;
+    }
+}
+
+/* Estilos para botones de asistencia en dashboard */
+.attendance-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.btn-small {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+}
+
+.btn-success {
+    background: #10b981;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #059669;
+}
+
+.btn-danger {
+    background: #ef4444;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #dc2626;
+}
+
+.attendance-note {
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--secondary-text);
+    font-style: italic;
+}

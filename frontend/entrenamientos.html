@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>MARQRun - Entrenamientos</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/trainings.css">
+</head>
+<body class="trainings-page">
+
+<button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+
+<div id="header">
+    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+    <img id="profilePic" src="assets/default-avatar.svg" alt="Perfil" onclick="toggleDropdown()">
+    <div id="dropdown">
+        <button onclick="window.location.href='profile.html'">Ver Perfil</button>
+        <button id="adminDropdownButton" onclick="window.location.href='./admin.html'" style="display:none;">Admin</button>
+        <button onclick="logout()">Cerrar Sesión</button>
+    </div>
+</div>
+
+<div class="container trainings-container">
+    <div class="sidebar" id="sidebar">
+        <ul>
+            <li><a href="index.html">Grupos</a></li>
+            <li><a href="entrenamientos.html" class="active">Entrenamientos</a></li>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="chat.html">Chat Grupal</a></li>
+            <li id="adminNavLink" style="display:none;"><a href="./admin.html" onclick="window.location.href='./admin.html'">Admin</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content trainings-main">
+        <div class="trainings-topbar">
+            <div>
+                <p class="eyebrow">Entrenamientos</p>
+                <h1 id="selectedGroupTitle">Entrenamientos del grupo</h1>
+                <p id="selectedGroupLabel" class="subtitle">La información se sincroniza con el grupo seleccionado en la página Grupos.</p>
+            </div>
+        </div>
+
+        <div id="trainingEmptyState" class="page-empty-state" style="display:none;">Selecciona un grupo en la página Grupos para ver los entrenamientos. Si ya seleccionaste uno, revisa tu selección o vuelve a cargar la página.</div>
+        <div id="mensaje" class="mensaje" style="display:none;"></div>
+
+        <div id="trainingContent" style="display:none;">
+        <section class="trainings-layout">
+            <div class="panel card training-panel">
+                <div class="panel-header">
+                    <h2>Crear nuevo entrenamiento</h2>
+                    <p>Solo los coordinadores pueden crear entrenamientos.</p>
+                </div>
+                <div class="panel-content">
+                    <div id="trainingsNotice" class="info-text"></div>
+                    <div class="form-grid">
+                        <label>
+                            Fecha
+                            <input type="date" id="fecha">
+                        </label>
+                        <label>
+                            Hora
+                            <input type="time" id="hora">
+                        </label>
+                        <label>
+                            Duración (minutos)
+                            <input type="number" id="duracion" min="5" max="1440" placeholder="Duración en minutos" value="60">
+                        </label>
+                        <label>
+                            Tipo
+                            <input id="tipo" placeholder="Tipo de entrenamiento">
+                        </label>
+                        <label>
+                            Ubicación
+                            <input id="ubicacion" placeholder="Ubicación (opcional)">
+                        </label>
+                        <div class="dificultad-group">
+                            <span>Dificultad</span>
+                            <div class="radio-row">
+                                <label><input type="radio" name="dificultad" value="fácil"> Fácil</label>
+                                <label><input type="radio" name="dificultad" value="medio"> Medio</label>
+                                <label><input type="radio" name="dificultad" value="alto"> Alto</label>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="primary" onclick="crearEntrenamiento()">Crear entrenamiento</button>
+                </div>
+            </div>
+
+            <!-- Panel de filtros -->
+            <div class="panel card filter-panel">
+                <div class="panel-header">
+                    <h2>Filtros</h2>
+                </div>
+                <div class="panel-content">
+                    <div class="filter-grid">
+                        <label>
+                            Tipo
+                            <input type="text" id="filtroTipo" placeholder="Filtrar por tipo">
+                        </label>
+                        <label>
+                            Fecha desde
+                            <input type="date" id="filtroFechaDesde">
+                        </label>
+                        <label>
+                            Fecha hasta
+                            <input type="date" id="filtroFechaHasta">
+                        </label>
+                        <label>
+                            Ubicación
+                            <input type="text" id="filtroUbicacion" placeholder="Filtrar por ubicación">
+                        </label>
+                    </div>
+                    <div class="filter-actions">
+                        <button onclick="aplicarFiltros()" class="btn-secondary">Aplicar filtros</button>
+                        <button onclick="limpiarFiltros()" class="btn-outline">Limpiar</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel card">
+            <div class="panel-header">
+                <h2>Próximos entrenamientos</h2>
+            </div>
+            <div class="panel-content">
+                <ul id="listaEntrenamientos" class="training-list"></ul>
+            </div>
+        </section>
+
+        <!-- Calendario visual -->
+        <section class="panel card calendar-panel">
+            <div class="panel-header">
+                <h2>Calendario de entrenamientos</h2>
+                <div class="calendar-nav">
+                    <button onclick="cambiarMes(-1)" class="btn-nav">‹</button>
+                    <h3 id="calendarTitle">Mes Actual</h3>
+                    <button onclick="cambiarMes(1)" class="btn-nav">›</button>
+                </div>
+            </div>
+            <div class="panel-content">
+                <div id="calendar" class="calendar-grid"></div>
+            </div>
+        </section>
+
+        <section class="panel card">
+            <div class="panel-header">
+                <h2>Entrenamientos anteriores</h2>
+            </div>
+            <div class="panel-content">
+                <ul id="listaEntrenamientosAnteriores" class="training-list"></ul>
+            </div>
+        </section>
+
+        </div>
+
+    </div>
+</div>
+
+<script src="js/utils.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/groups.js"></script>
+<script src="js/trainings.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/main.js"></script>
+
+</body>
+</html>
