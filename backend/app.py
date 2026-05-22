@@ -417,10 +417,6 @@ def index():
     return jsonify({"estado": "Backend MARQRun PRO funcionando"})
 
 # -------- SERVIR ARCHIVOS FRONTEND --------
-@app.route('/frontend/<path:filepath>')
-def serve_frontend(filepath):
-    frontend_dir = os.path.join(os.path.dirname(__file__), '..', 'frontend')
-    return send_from_directory(frontend_dir, filepath)
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
