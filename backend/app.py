@@ -1673,10 +1673,9 @@ if __name__ == "__main__":
         db.create_all()
         ensure_password_column()
         ensure_admin_exists()
-
-    # Para desarrollo local con socketio (solo en modo desarrollo)
-    if os.getenv('FLASK_ENV') != 'production':
-        socketio.run(app, debug=False, host='0.0.0.0', port=5000)
+    
+    # Para desarrollo local: ejecutar con 'python -m flask run'
+    # Para producción: usar gunicorn (ver Procfile)
 
 # Para Vercel (serverless)
 # El objeto 'app' será utilizado por Vercel como WSGI application
