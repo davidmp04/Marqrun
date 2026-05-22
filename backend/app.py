@@ -27,7 +27,13 @@ logging.basicConfig(level=logging.INFO)
 # ============================
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-DATABASE_PATH = os.path.join(BASE_DIR, '..', 'database', 'marqrun.db')
+
+# Crear carpeta para datos si no existe
+DB_DIR = os.path.join(BASE_DIR, 'instance')
+if not os.path.exists(DB_DIR):
+    os.makedirs(DB_DIR)
+
+DATABASE_PATH = os.path.join(DB_DIR, 'marqrun.db')
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + DATABASE_PATH
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
