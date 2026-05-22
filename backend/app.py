@@ -1674,8 +1674,24 @@ if __name__ == "__main__":
         ensure_password_column()
         ensure_admin_exists()
     
-    # Para desarrollo local: ejecutar con 'python -m flask run'
-    # Para producción: usar gunicorn (ver Procfile)
+    # En producción, ejecutar con gunicorn via Procfile
+    # Si se ejecuta directamente, lanzar gunicorn
+    import subprocess
+    import sys
+    
+    if os.getenv('FLASK_ENV') == 'production':
+        # Render en producción - usar gunicorn
+        port = os.getenv('PORT', '5000')
+        subprocess.run([
+            sys.executable, '-m', 'gunicorn',
+            '--worker-class', 'eventlet',
+            '-w', '1',
+            f'--bind', f'0.0.0.0:{port}',
+            'wsgi:app'
+        ])
+    else:
+        # Desarrollo local
+        app.run(debug=True, host='0.0.0.0', port=5000)
 
 # Para Vercel (serverless)
 # El objeto 'app' será utilizado por Vercel como WSGI application
