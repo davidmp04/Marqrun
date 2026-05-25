@@ -38,8 +38,8 @@ const CONFIG_STAGING = {
 // PRODUCTION (Live)
 // =============================================
 const CONFIG_PRODUCTION = {
-    API_BASE_URL: 'https://api.marqun.com',
-    SOCKET_URL: 'https://api.marqun.com',
+    API_BASE_URL: 'https://marqrun-backend.onrender.com',
+    SOCKET_URL: 'https://marqrun-backend.onrender.com',
     DEBUG_MODE: false,
     LOG_TO_PANEL: false,
     ENVIRONMENT: 'production'
@@ -49,7 +49,7 @@ const CONFIG_PRODUCTION = {
 // SELECCIONAR AMBIENTE ACTIVO
 // =============================================
 // Cambiar aquí según necesites: CONFIG_DEV, CONFIG_DEV_BLUESTACK, CONFIG_STAGING, o CONFIG_PRODUCTION
-const CONFIG = CONFIG_DEV_BLUESTACK;
+const CONFIG = CONFIG_PRODUCTION;
 
 // =============================================
 // INFORMACIÓN ÚTIL
