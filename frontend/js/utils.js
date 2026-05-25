@@ -3,27 +3,27 @@
 // Detectar automáticamente el API_URL basado en donde se carga la página
 let API = 'http://127.0.0.1:5000'; // Default
 
-// Si estamos cargando desde un servidor (no localhost), usar esa URL como base
-if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-    // Estamos en un servidor remoto (10.0.2.2 del emulador o servidor real)
-    API = `http://${window.location.hostname}:${window.location.port || 5000}`;
-    console.log('🌐 Detectado servidor remoto:', API);
+// PRIMERO: Si config.js se cargó con URL personalizada, usarla
+if (typeof CONFIG !== 'undefined' && CONFIG.API_BASE_URL) {
+    API = CONFIG.API_BASE_URL;
+    console.log('✅ config.js cargado - usando API:', API);
 }
 // Si estamos en Capacitor (app nativa), usar 10.0.2.2
 else if (typeof window.Capacitor !== 'undefined') {
     API = 'http://10.0.2.2:5000';
     console.log('🔧 Capacitor detectado - usando 10.0.2.2');
 }
-// Si config.js se cargó, usarlo
-else if (typeof CONFIG !== 'undefined' && CONFIG.API_BASE_URL) {
-    API = CONFIG.API_BASE_URL;
-    console.log('✅ config.js cargado correctamente');
+// Si estamos cargando desde un servidor (no localhost), usar esa URL como base
+else if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    // Estamos en un servidor remoto (emulador o servidor real)
+    API = `http://${window.location.hostname}:${window.location.port || 5000}`;
+    console.log('🌐 Detectado servidor remoto:', API);
 }
 else {
     console.log('⚠️ Usando fallback: 127.0.0.1:5000');
 }
 
-console.log('🔗 API:', API);
+console.log('🔗 API Final:', API);
 
 const DEFAULT_AVATAR = "assets/default-avatar.svg";
 
