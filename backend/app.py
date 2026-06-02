@@ -33,9 +33,23 @@ DB_DIR = os.path.join(BASE_DIR, 'instance')
 if not os.path.exists(DB_DIR):
     os.makedirs(DB_DIR)
 
-DATABASE_PATH = os.path.join(DB_DIR, 'marqrun.db')
+# ====================================
+# CONFIG BD: PostgreSQL en producción, SQLite en dev
+# ====================================
+DATABASE_URL = os.getenv('DATABASE_URL')
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + DATABASE_PATH
+if DATABASE_URL:
+    # Usar PostgreSQL en Render (convertir postgres:// a postgresql://)
+    if DATABASE_URL.startswith('postgres://'):
+        DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
+    app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
+    print("✅ Usando PostgreSQL desde DATABASE_URL")
+else:
+    # Usar SQLite localmente
+    DATABASE_PATH = os.path.join(DB_DIR, 'marqrun.db')
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + DATABASE_PATH
+    print("ℹ️ Usando SQLite (desarrollo local)")
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = os.path.join(BASE_DIR, 'uploads')
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  # 2MB

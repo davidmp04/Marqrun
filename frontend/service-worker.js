@@ -42,15 +42,15 @@ self.addEventListener('fetch', event => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Si es API del servidor, usar red primero
+  // Si es API del servidor, usar red primero (pero NO cachear POST)
   if (url.pathname.startsWith('/login') || 
       url.pathname.startsWith('/grupos') || 
       url.pathname.startsWith('/socket.io')) {
     event.respondWith(
       fetch(request)
         .then(response => {
-          // Cachear respuestas exitosas
-          if (response.ok) {
+          // Cachear SOLO GET requests exitosos (POST, PUT, DELETE no se cachean)
+          if (response.ok && request.method === 'GET') {
             const responseToCache = response.clone();
             caches.open(CACHE_NAME).then(cache => {
               cache.put(request, responseToCache);
@@ -59,10 +59,14 @@ self.addEventListener('fetch', event => {
           return response;
         })
         .catch(() => {
-          // Si no hay conexión, usar cache
-          return caches.match(request).then(response => {
-            return response || new Response('Sin conexión', { status: 503 });
-          });
+          // Si no hay conexión, usar cache (solo para GET)
+          if (request.method === 'GET') {
+            return caches.match(request).then(response => {
+              return response || new Response('Sin conexión', { status: 503 });
+            });
+          }
+          // Para POST/PUT/DELETE sin conexión, rechazar
+          return new Response('Sin conexión - operación no permitida offline', { status: 503 });
         })
     );
   } else {
