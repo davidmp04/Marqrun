@@ -1199,8 +1199,8 @@ def borrar_entrenamiento(id):
         logging.info(f"Entrenamiento eliminado: {id}")
     except Exception as e:
         db.session.rollback()
-        logging.error(f"Error eliminando entrenamiento: {e}")
-        return jsonify({"error": "Error interno del servidor."}), 500
+        logging.error(f"Error eliminando entrenamiento: {type(e).__name__}: {str(e)}")
+        return jsonify({"error": f"Error: {str(e)}"}), 500
 
     return jsonify({"mensaje": "Entrenamiento eliminado exitosamente."})
 
