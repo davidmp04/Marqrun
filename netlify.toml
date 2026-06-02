@@ -11,3 +11,14 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+# Headers para servir correctamente manifest.json y otros archivos
+[[headers]]
+  for = "/manifest.json"
+  [headers.values]
+    Content-Type = "application/manifest+json"
+
+[[headers]]
+  for = "/*.json"
+  [headers.values]
+    Content-Type = "application/json"

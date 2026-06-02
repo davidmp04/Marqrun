@@ -238,7 +238,7 @@
             })
             .catch(networkErr => {
                 const msg = '❌ Error de conexión: ' + String(networkErr);
-                err(msg);
+                console.error(msg);
                 document.getElementById('loginError').textContent = msg;
                 document.getElementById('loginBtn').disabled = false;
             });
