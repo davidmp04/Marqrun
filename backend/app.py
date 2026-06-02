@@ -90,7 +90,7 @@ class Usuario(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(50), nullable=False, unique=True)
-    password_hash = db.Column(db.String(128), nullable=True)
+    password_hash = db.Column(db.String(255), nullable=True)
     avatar = db.Column(db.String(500), nullable=True)
     bio = db.Column(db.String(300), nullable=True)
     location = db.Column(db.String(100), nullable=True)
@@ -132,7 +132,7 @@ class Grupo(db.Model):
     entrenamientos = db.relationship("Entrenamiento", backref="grupo", cascade="all, delete")
     miembros = db.relationship("GrupoMiembro", backref="grupo", cascade="all, delete")
     tipo = db.Column(db.String(20), nullable=False, default="publico")
-    password_hash = db.Column(db.String(128), nullable=True)
+    password_hash = db.Column(db.String(255), nullable=True)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -324,14 +324,14 @@ def ensure_password_column():
         if "usuarios" in inspector.get_table_names():
             columnas = [col["name"] for col in inspector.get_columns("usuarios")]
             if "password_hash" not in columnas:
-                conn.execute(text('ALTER TABLE usuarios ADD COLUMN password_hash VARCHAR(128)'))
+                conn.execute(text('ALTER TABLE usuarios ADD COLUMN password_hash VARCHAR(255)'))
 
         if "grupos" in inspector.get_table_names():
             columnas = [col["name"] for col in inspector.get_columns("grupos")]
             if "tipo" not in columnas:
                 conn.execute(text('ALTER TABLE grupos ADD COLUMN tipo VARCHAR(20) DEFAULT "publico"'))
             if "password_hash" not in columnas:
-                conn.execute(text('ALTER TABLE grupos ADD COLUMN password_hash VARCHAR(128)'))
+                conn.execute(text('ALTER TABLE grupos ADD COLUMN password_hash VARCHAR(255)'))
 
         if "entrenamientos" in inspector.get_table_names():
             columnas = [col["name"] for col in inspector.get_columns("entrenamientos")]
