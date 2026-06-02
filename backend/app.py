@@ -1196,6 +1196,8 @@ def borrar_entrenamiento(id):
     try:
         # Primero borrar todas las asistencias asociadas
         Asistencia.query.filter_by(entrenamiento_id=id).delete()
+        # Borrar todas las notificaciones asociadas
+        Notificacion.query.filter_by(entrenamiento_id=id).delete()
         # Luego borrar el entrenamiento
         db.session.delete(entrenamiento)
         db.session.commit()
