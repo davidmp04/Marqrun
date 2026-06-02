@@ -998,21 +998,21 @@ def promover_coordinador(grupo_id):
 
 
 @app.route("/grupos/<int:grupo_id>/dashboard", methods=["GET"])
+@verificar_token
 def dashboard_grupo(grupo_id):
     grupo = Grupo.query.get(grupo_id)
     if not grupo:
         return jsonify({"error": "Grupo no encontrado."}), 404
 
-    total_miembros = len(grupo.miembros)
-    total_entrenamientos = len(grupo.entrenamientos)
-    asistencias = Asistencia.query.join(Entrenamiento).filter(Entrenamiento.grupo_id == grupo_id).count()
-    usuario_id = request.args.get("usuario_id", type=int)
-    if not usuario_id:
-        return jsonify({"error": "Debes ser miembro del grupo para ver esta información."}), 403
+    usuario_id = request.usuario_id  # Del token JWT
 
     miembro = GrupoMiembro.query.filter_by(grupo_id=grupo_id, usuario_id=usuario_id).first()
     if not miembro and grupo.creador_id != usuario_id:
         return jsonify({"error": "Debes pertenecer al grupo para ver esta información."}), 403
+
+    total_miembros = len(grupo.miembros)
+    total_entrenamientos = len(grupo.entrenamientos)
+    asistencias = Asistencia.query.join(Entrenamiento).filter(Entrenamiento.grupo_id == grupo_id).count()
 
     proximos = [e.to_dict() for e in Entrenamiento.query.filter_by(grupo_id=grupo_id).order_by(Entrenamiento.fecha, Entrenamiento.hora).limit(3)]
 
