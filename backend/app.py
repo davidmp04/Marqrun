@@ -1194,6 +1194,9 @@ def borrar_entrenamiento(id):
         return jsonify({"error": "Solo puedes eliminar entrenamientos que hayas creado."}), 403
 
     try:
+        # Primero borrar todas las asistencias asociadas
+        Asistencia.query.filter_by(entrenamiento_id=id).delete()
+        # Luego borrar el entrenamiento
         db.session.delete(entrenamiento)
         db.session.commit()
         logging.info(f"Entrenamiento eliminado: {id}")
