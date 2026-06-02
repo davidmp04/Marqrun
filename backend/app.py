@@ -325,6 +325,12 @@ def ensure_password_column():
             columnas = [col["name"] for col in inspector.get_columns("usuarios")]
             if "password_hash" not in columnas:
                 conn.execute(text('ALTER TABLE usuarios ADD COLUMN password_hash VARCHAR(255)'))
+            else:
+                # Alterar tipo si ya existe pero tiene tamaño incorrecto
+                try:
+                    conn.execute(text('ALTER TABLE usuarios ALTER COLUMN password_hash TYPE VARCHAR(255)'))
+                except:
+                    pass
 
         if "grupos" in inspector.get_table_names():
             columnas = [col["name"] for col in inspector.get_columns("grupos")]
@@ -332,6 +338,12 @@ def ensure_password_column():
                 conn.execute(text('ALTER TABLE grupos ADD COLUMN tipo VARCHAR(20) DEFAULT "publico"'))
             if "password_hash" not in columnas:
                 conn.execute(text('ALTER TABLE grupos ADD COLUMN password_hash VARCHAR(255)'))
+            else:
+                # Alterar tipo si ya existe pero tiene tamaño incorrecto
+                try:
+                    conn.execute(text('ALTER TABLE grupos ALTER COLUMN password_hash TYPE VARCHAR(255)'))
+                except:
+                    pass
 
         if "entrenamientos" in inspector.get_table_names():
             columnas = [col["name"] for col in inspector.get_columns("entrenamientos")]
